@@ -1,44 +1,36 @@
-name: Mirror GitHub Pages from Another Repo (with replacement)
+name: Mirror and Replace
 
 on:
-  schedule:
-    - cron: "0 * * * *"  # every hour
   workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'  # Every hour
 
 jobs:
-  mirror:
+  mirror-and-replace:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout destination repo
+      - name: Checkout destination repository
         uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-          
-      - name: Clone source repo
-        run: |
-          mkdir -p source
-          git clone --depth 1 https://github.com/Tycho10101/tycho10101.github.io.git source
-          if [ ! "$(ls -A source)" ]; then
-              echo "Source repository is empty or cloning failed."
-              exit 1
-          fi
-          rm -rf ./*
-          rsync -a source/ ./
-          rm -rf source
-    
-      - name: Replace text in all files
-        run: |
-          find . -type f -exec sed -i 's|https://tycho10101.is-a.dev|https://tycho10101.is-a.dev/site-mirror|g' {} +
-          find . -type f -exec sed -i 's|https://tycho10101.github.io|https://tycho10101.is-a.dev/site-mirror|g' {} +
 
-      - name: Configure git and push changes
-        env:
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clone source repository
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+          git clone --depth=1 https://github.com/Tycho10101/tycho10101.github.io.git source_repo
+
+      - name: Copy and replace strings
+        run: |
+          mkdir -p mirror
+          cp -r source_repo/* mirror/
+          
+          find mirror -type f -exec sed -i 's|https://tycho10101.is-a.dev|https://tycho10101.is-a.dev/site-mirror|g; s|https://tycho10101.github.io|https://tycho10101.is-a.dev/site-mirror|g' {} +
+
+      - name: Commit and push changes
+        run: |
+          rm -rf source_repo
+          cp -r mirror/* ./
+          rm -rf mirror
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
           git add .
-          git diff --cached --quiet || git commit -m "Mirror update with replaced text"
-          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
+          git diff-index --quiet HEAD || git commit -m "Mirror with string replacements"
           git push

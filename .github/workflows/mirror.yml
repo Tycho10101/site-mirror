@@ -21,7 +21,7 @@ jobs:
 
       - name: Clone source repository
         run: |
-          git clone --depth=1 https://github.com/Tycho10101/tycho10101.github.io source_repo
+          git clone --depth=1 https://github.com/Tycho10101/tycho10101.github.io.git source_repo
 
       - name: Copy and replace strings
         run: |

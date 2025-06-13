@@ -14,12 +14,16 @@ jobs:
         uses: actions/checkout@v3
         with:
           persist-credentials: false
-
+          
       - name: Clone source repo
         run: |
-          git clone --depth 1 https://github.com/Tycho10101/tycho10101.github.io.git source
+          git clone --depth 1 https://x-access-token:${{ secrets.SOURCE_REPO_TOKEN }}@github.com/Tycho10101/tycho10101.github.io.git source
+          if [ ! "$(ls -A source)" ]; then
+              echo "Source repository is empty or cloning failed."
+              exit 1
+          fi
           rm -rf ./*
-          cp -r source/* ./
+          rsync -a source/ ./
           rm -rf source
 
       - name: Replace text in all files

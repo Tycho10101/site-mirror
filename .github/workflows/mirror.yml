@@ -1,4 +1,4 @@
-name: Mirror GitHub Pages from Another Repo
+name: Mirror GitHub Pages from Another Repo (with replacement)
 
 on:
   schedule:
@@ -10,17 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout destination repo (this repo)
+      - name: Checkout destination repo
         uses: actions/checkout@v3
         with:
           persist-credentials: false
 
       - name: Clone source repo
         run: |
-          git clone --depth 1 https://github.com/tycho10101/tycho10101.is-a.dev.git source
+          git clone --depth 1 https://github.com/Tycho10101/tycho10101.github.io.git source
           rm -rf ./*
           cp -r source/* ./
           rm -rf source
+
+      - name: Replace text in all files
+        run: |
+          find . -type f -exec sed -i 's|https://tycho10101.is-a.dev|https://tycho10101.is-a.dev/site-mirror|g' {} +
+          find . -type f -exec sed -i 's|https://tycho10101.github.io|https://tycho10101.is-a.dev/site-mirror|g' {} +
 
       - name: Configure git and push changes
         env:
@@ -29,6 +34,6 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add .
-          git diff --cached --quiet || git commit -m "Mirror update"
+          git diff --cached --quiet || git commit -m "Mirror update with replaced text"
           git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
           git push

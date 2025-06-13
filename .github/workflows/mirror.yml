@@ -18,7 +18,7 @@ jobs:
       - name: Clone source repo
         run: |
           mkdir -p source
-          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Tycho10101/tycho10101.github.io.git source
+          git clone --depth 1 https://github.com/Tycho10101/tycho10101.github.io.git source
           if [ ! "$(ls -A source)" ]; then
               echo "Source repository is empty or cloning failed."
               exit 1

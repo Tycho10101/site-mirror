@@ -17,7 +17,7 @@ jobs:
 
       - name: Clone source repo
         run: |
-          git clone --depth 1 https://github.com/Tycho10101/tycho10101.github.io.git
+          git clone --depth 1 https://github.com/Tycho10101/tycho10101.github.io.git source
           rm -rf ./*
           cp -r source/* ./
           rm -rf source

@@ -1,4 +1,4 @@
-name: Mirror and Replace
+name: Mirror and Replace (Preserve CNAME)
 
 on:
   workflow_dispatch:
@@ -13,24 +13,40 @@ jobs:
       - name: Checkout destination repository
         uses: actions/checkout@v3
 
+      - name: Backup CNAME (if exists)
+        run: |
+          if [ -f CNAME ]; then
+            cp CNAME cname_backup
+          fi
+
       - name: Clone source repository
         run: |
-          git clone --depth=1 https://github.com/Tycho10101/tycho10101.github.io.git source_repo
+          git clone --depth=1 https://github.com/USERNAME/SOURCE_REPO source_repo
 
       - name: Copy and replace strings
         run: |
           mkdir -p mirror
           cp -r source_repo/* mirror/
-          
+
           find mirror -type f -exec sed -i 's|https://tycho10101.is-a.dev|https://tycho10101.is-a.dev/site-mirror|g; s|https://tycho10101.github.io|https://tycho10101.is-a.dev/site-mirror|g' {} +
+
+      - name: Clean and replace repo content
+        run: |
+          rm -rf source_repo
+          rm -rf !(.git|.github|cname_backup) 2>/dev/null || true
+          cp -r mirror/* ./
+          rm -rf mirror
+
+      - name: Restore CNAME
+        run: |
+          if [ -f cname_backup ]; then
+            mv cname_backup CNAME
+          fi
 
       - name: Commit and push changes
         run: |
-          rm -rf source_repo
-          cp -r mirror/* ./
-          rm -rf mirror
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add .
-          git diff-index --quiet HEAD || git commit -m "Mirror with string replacements"
+          git diff-index --quiet HEAD || git commit -m "Mirror with string replacements (preserve CNAME)"
           git push

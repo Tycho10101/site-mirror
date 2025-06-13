@@ -1,4 +1,4 @@
-name: Mirror and Replace (Preserve CNAME)
+name: Mirror Site
 
 on:
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
 
       - name: Clone source repository
         run: |
-          git clone --depth=1 https://github.com/USERNAME/SOURCE_REPO source_repo
+          git clone --depth=1 https://github.com/Tycho10101/tycho10101.github.io source_repo
 
       - name: Copy and replace strings
         run: |
@@ -48,5 +48,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add .
-          git diff-index --quiet HEAD || git commit -m "Mirror with string replacements (preserve CNAME)"
+          git diff-index --quiet HEAD || git commit -m "Hourly Mirror Site Update"
           git push

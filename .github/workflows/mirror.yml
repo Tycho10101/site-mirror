@@ -33,6 +33,7 @@ jobs:
       - name: Clean and replace repo content
         run: |
           rm -rf source_repo
+          shopt -s extglob
           rm -rf !(.git|.github|cname_backup) 2>/dev/null || true
           cp -r mirror/* ./
           rm -rf mirror

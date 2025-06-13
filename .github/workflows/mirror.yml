@@ -18,7 +18,7 @@ jobs:
           rm -rf mirror
           mkdir mirror
           wget --mirror --convert-links --adjust-extension --page-requisites --no-parent https://tycho10101.is-a.dev/ -P mirror
-          mv mirror/example.com/* . # adjust for domain structure
+          mv mirror/tycho10101.is-a.dev/* . # adjust for domain structure
           rm -rf mirror
 
       - name: Commit and push

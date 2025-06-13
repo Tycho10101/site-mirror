@@ -27,7 +27,7 @@ jobs:
         run: |
           mkdir -p mirror
           cp -r source_repo/* mirror/
-          find mirror -type f -exec sed -i 's|https://tycho10101.is-a.dev|http://tycho10101.mooo.com/|g; s|https://tycho10101.github.io|http://tycho10101.mooo.com/|g' {} +
+          find mirror -type f -exec sed -i 's|https://tycho10101.is-a.dev|http://tycho10101.mooo.com|g; s|https://tycho10101.github.io|http://tycho10101.mooo.com|g' {} +
 
       - name: Commit and push changes
         run: |

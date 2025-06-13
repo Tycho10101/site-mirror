@@ -27,20 +27,19 @@ jobs:
         run: |
           mkdir -p mirror
           cp -r source_repo/* mirror/
-          
           find mirror -type f -exec sed -i 's|https://tycho10101.is-a.dev|http://tycho10101.mooo.com/|g; s|https://tycho10101.github.io|http://tycho10101.mooo.com/|g' {} +
-
-      - name: Restore CNAME
-        run: |
-          if [ -f cname_backup ]; then
-            mv cname_backup CNAME
-          fi
 
       - name: Commit and push changes
         run: |
           rm -rf source_repo
           cp -r mirror/* ./
           rm -rf mirror
+
+          # Restore CNAME here
+          if [ -f cname_backup ]; then
+            mv cname_backup CNAME
+          fi
+
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add .
